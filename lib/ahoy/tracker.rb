@@ -72,7 +72,12 @@ module Ahoy
     end
 
     def set_visit_cookie
-      set_cookie("ahoy_visit", visit_id, Ahoy.visit_duration)
+      if Ahoy.visit_policy == :utc_midnight
+        t = Time.now.utc + Ahoy.visit_duration
+        set_cookie("ahoy_visit", visit_id, t.end_of_day - t + Ahoy.visit_duration)
+      else
+        set_cookie("ahoy_visit", visit_id, Ahoy.visit_duration)
+      end
     end
 
     def set_visitor_cookie

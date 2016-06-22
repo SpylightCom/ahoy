@@ -43,6 +43,9 @@ require "ahoy/subscribers/active_record"
 module Ahoy
   UUID_NAMESPACE = UUIDTools::UUID.parse("a82ae811-5011-45ab-a728-569df7499c5f")
 
+  mattr_accessor :visit_policy
+  self.visit_policy = :original # :utc_midnight
+
   mattr_accessor :visit_duration
   self.visit_duration = 4.hours
 
