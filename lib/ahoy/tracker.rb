@@ -111,7 +111,7 @@ module Ahoy
       cookie = {
         value: value
       }
-      cookie[:expires] = duration.from_now if duration
+      cookie[:expires] = duration.seconds.from_now if duration
       domain = Ahoy.cookie_domain || Ahoy.domain
       cookie[:domain] = domain if domain
       request.cookie_jar[name] = cookie
