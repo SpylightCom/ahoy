@@ -27,6 +27,7 @@ Ahoy supports a number of data stores out of the box.  You can start with one of
 
 - [PostgreSQL, MySQL, or SQLite](#postgresql-mysql-or-sqlite)
 - [MongoDB](#mongodb)
+- [Kafka](#kafka)
 - [Fluentd](#fluentd)
 - [RabbitMQ](#rabbitmq)
 - [Amazon Kinesis Firehose](#amazon-kinesis-firehose)
@@ -47,6 +48,22 @@ rake db:migrate
 ```sh
 rails generate ahoy:stores:mongoid
 ```
+
+### Kafka
+
+Add [ruby-kafka](https://github.com/zendesk/ruby-kafka) to your Gemfile.
+
+```ruby
+gem 'ruby-kafka'
+```
+
+And run:
+
+```sh
+rails generate ahoy:stores:kafka
+```
+
+Use `ENV["KAFKA_URL"]` to configure.
 
 ### Fluentd
 
@@ -423,7 +440,9 @@ Ahoy.quiet = false
 
 How you explore the data depends on the data store used.
 
-Here are ways to do it with ActiveRecord.
+For SQL databases, you can use [Blazer](https://github.com/ankane/blazer) to easily generate charts and dashboards.
+
+With ActiveRecord, you can do:
 
 ```ruby
 Visit.group(:search_keyword).count
@@ -431,7 +450,7 @@ Visit.group(:country).count
 Visit.group(:referring_domain).count
 ```
 
-[Chartkick](http://chartkick.com/) and [Groupdate](https://github.com/ankane/groupdate) make it super easy to visualize the data.
+[Chartkick](http://chartkick.com/) and [Groupdate](https://github.com/ankane/groupdate) make it easy to visualize the data.
 
 ```erb
 <%= line_chart Visit.group_by_day(:started_at).count %>
@@ -472,17 +491,13 @@ The same approach also works with visitor tokens.
 
 ### Querying Properties
 
-Postgres `json` or `jsonb`
+With ActiveRecord, use:
 
 ```ruby
-Ahoy::Event.where("properties ->> 'store_id' = 1").count
+Ahoy::Event.where(name: "Viewed product").where_properties(product_id: 123).count
 ```
 
-Text
-
-```ruby
-Ahoy::Event.where("properties LIKE '%\"store_id\": \"1\"%'").count
-```
+**Note:** If you get a `NoMethodError`, upgrade Ahoy and add `include Ahoy::Properties` to your model.
 
 ## Native Apps
 
@@ -514,6 +529,14 @@ Send a `POST` request as `Content-Type: application/json` to `/ahoy/events` with
 - user token (depends on your authentication framework)
 
 Use an array to pass multiple events at once.
+
+## Reference
+
+By default, Ahoy create endpoints at `/ahoy/visits` and `/ahoy/events`. To disable, use:
+
+```ruby
+Ahoy.mount = false
+```
 
 ## Upgrading
 

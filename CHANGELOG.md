@@ -1,3 +1,18 @@
+## 1.4.3 [unreleased]
+
+- Fixed visit recreation on cookie expiration
+
+## 1.4.2
+
+- Fixed issues with `where_properties`
+
+## 1.4.1
+
+- Added `where_properties` method
+- Added Kafka store
+- Added `mount` option
+- Use less intrusive version of `safely`
+
 ## 1.4.0
 
 - Use `ActiveRecordTokenStore` by default (integer instead of uuid for id)
